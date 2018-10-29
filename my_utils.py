@@ -9,7 +9,6 @@ def scrape_directory(path, flag, recursive=True):
     By default, performs recursive search on all subdirectories of "path". Can
     be disabled by setting kwd "recursive" to False.
     '''
-    import os
     catalog = []
     #Dump all contents of path into temporary container
     dir_dump = os.listdir(path)         
