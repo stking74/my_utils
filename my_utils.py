@@ -8,6 +8,20 @@ def scrape_directory(path, flag, recursive=True):
     
     By default, performs recursive search on all subdirectories of "path". Can
     be disabled by setting kwd "recursive" to False.
+    
+    Input:
+    --------
+    path : str
+        Directory to be scraped
+    flag : str
+        Flag to identify directory contents to be returned
+    recursive : bool
+        If true, subdirectories of path are also scraped, results returned with root (default recursive=True)
+    
+    Output:
+    --------
+    returned_files : list of str
+        Contents of path which matched flag
     '''
     catalog = []
     #Dump all contents of path into temporary container
@@ -43,3 +57,20 @@ def scrape_directory(path, flag, recursive=True):
         except IndexError:
             continue
     return returned_files
+
+def soft_append(container, addendum):
+    '''
+    Appends addendum item to container only if addendum is not already member
+    of container. Returns nothing, since container is appended in-place.
+    
+    Input:
+    --------
+    container : list
+        container object to be appended
+    addendum : any
+        value to be soft-appended to container
+    '''
+    if addendum not in container:
+        container.append(addendum)
+        return
+    return
