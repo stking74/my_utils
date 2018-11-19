@@ -23,6 +23,7 @@ def scrape_directory(path, flag, recursive=True):
     returned_files : list of str
         Contents of path which matched flag
     '''
+    import os
     catalog = []
     #Dump all contents of path into temporary container
     dir_dump = os.listdir(path)         
@@ -74,3 +75,41 @@ def soft_append(container, addendum):
         container.append(addendum)
         return
     return
+
+def find_nearest_member(container, query):
+    '''
+    Finds the member of a container whose value is nearest to query. Returns
+    index of nearest value within container. Intended to be used when 
+    list.index(query) is, for whatever reason, not a viable option for locating
+    the desired value within the container.
+    
+    Input:
+    --------
+    container : container variable (eg list, tuple, set, Numpy array)
+        The container to be searched by the function
+    query : number (eg int or float)
+        Value to be searched for within container
+        
+    Output:
+    --------
+    mindex : int
+        Index of item in container whose value most nearly matches query
+    '''
+    try:
+        diffs = abs(container - query)
+    except:
+        diffs = []
+        for entry in container:
+            difference = entry - query
+            diffs.append(abs(difference))
+    minimum = min(diffs)
+    mindex = list(diffs).index(minimum)
+    return mindex
+
+def progress_counter(i, interval, end):
+    if abs(i) > 0 and i % 1000 == 0:
+        print('%i / %i'%(i,end))
+    return
+
+
+    
