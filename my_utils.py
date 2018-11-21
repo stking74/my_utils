@@ -111,5 +111,50 @@ def progress_counter(i, interval, end):
         print('%i / %i'%(i,end))
     return
 
-
+def binning(container, n_bins, cores=None):
+    '''
+    Simple 1-dimensional binning algorithm. Reduces number of datapoints
+    in a linear counting-style measurement, such that the input and output
+    variables have the same integral.
     
+    Input:
+    --------
+    container : list or numpy.array
+        container object containing values to be binned
+    n_bins : int
+        number of bins in returned container
+    cores : int
+        number of cores to use for multiprocessing (planned feature)
+        
+    Output:
+    --------
+    new_container : numpy.array
+        container object of length n_bins containing binned values
+    '''
+    import numpy as np
+    ctype = type(container)
+    if ctype == np.ndarray:
+        old_shape = container.shape
+        try:
+            old_height, old_length = old_shape
+            binned_container = np.empty(shape=(old_height,n_bins))
+        except ValueError:
+            old_length = old_shape[0]
+            binned_container = np.empty(shape=n_bins)
+    elif ctype == list or ctype == tuple:
+        old_length = len(container)
+        binned_container = np.empty(shape=n_bins)
+    else:
+        print('Incompaible container type.')
+    container = np.array(container)
+    old_indices = np.array(range(old_length))
+    n_old_indices = old_indices/np.max(old_indices)
+    new_indices = np.array(range(n_bins))
+    n_new_indices = new_indices/np.max(new_indices)
+    index_gap = (n_new_indices[1] - n_new_indices[0])/2
+    new_container = np.empty(shape=(n_bins))
+    for idx, n in enumerate(n_new_indices):
+        window = np.where(abs(n_old_indices - n) < index_gap)
+        old_values = container[window]
+        new_container[idx] = np.sum(old_values)
+    return new_container
