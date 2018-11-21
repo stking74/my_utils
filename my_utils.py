@@ -23,6 +23,7 @@ def scrape_directory(path, flag, recursive=True):
     returned_files : list of str
         Contents of path which matched flag
     '''
+    import os
     catalog = []
     #Dump all contents of path into temporary container
     dir_dump = os.listdir(path)         
@@ -74,3 +75,86 @@ def soft_append(container, addendum):
         container.append(addendum)
         return
     return
+
+def find_nearest_member(container, query):
+    '''
+    Finds the member of a container whose value is nearest to query. Returns
+    index of nearest value within container. Intended to be used when 
+    list.index(query) is, for whatever reason, not a viable option for locating
+    the desired value within the container.
+    
+    Input:
+    --------
+    container : container variable (eg list, tuple, set, Numpy array)
+        The container to be searched by the function
+    query : number (eg int or float)
+        Value to be searched for within container
+        
+    Output:
+    --------
+    mindex : int
+        Index of item in container whose value most nearly matches query
+    '''
+    try:
+        diffs = abs(container - query)
+    except:
+        diffs = []
+        for entry in container:
+            difference = entry - query
+            diffs.append(abs(difference))
+    minimum = min(diffs)
+    mindex = list(diffs).index(minimum)
+    return mindex
+
+def progress_counter(i, interval, end):
+    if abs(i) > 0 and i % 1000 == 0:
+        print('%i / %i'%(i,end))
+    return
+
+def binning(container, n_bins, cores=None):
+    '''
+    Simple 1-dimensional binning algorithm. Reduces number of datapoints
+    in a linear counting-style measurement, such that the input and output
+    variables have the same integral.
+    
+    Input:
+    --------
+    container : list or numpy.array
+        container object containing values to be binned
+    n_bins : int
+        number of bins in returned container
+    cores : int
+        number of cores to use for multiprocessing (planned feature)
+        
+    Output:
+    --------
+    new_container : numpy.array
+        container object of length n_bins containing binned values
+    '''
+    import numpy as np
+    ctype = type(container)
+    if ctype == np.ndarray:
+        old_shape = container.shape
+        try:
+            old_height, old_length = old_shape
+            binned_container = np.empty(shape=(old_height,n_bins))
+        except ValueError:
+            old_length = old_shape[0]
+            binned_container = np.empty(shape=n_bins)
+    elif ctype == list or ctype == tuple:
+        old_length = len(container)
+        binned_container = np.empty(shape=n_bins)
+    else:
+        print('Incompaible container type.')
+    container = np.array(container)
+    old_indices = np.array(range(old_length))
+    n_old_indices = old_indices/np.max(old_indices)
+    new_indices = np.array(range(n_bins))
+    n_new_indices = new_indices/np.max(new_indices)
+    index_gap = (n_new_indices[1] - n_new_indices[0])/2
+    new_container = np.empty(shape=(n_bins))
+    for idx, n in enumerate(n_new_indices):
+        window = np.where(abs(n_old_indices - n) < index_gap)
+        old_values = container[window]
+        new_container[idx] = np.sum(old_values)
+    return new_container

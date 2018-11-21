@@ -1,7 +1,7 @@
-# my_utils
+#my_utils
 
 my_utils is a collection of utility functions which have proven useful enough
-to merit preservation in a centralized repository. They are stored to GitHub
+to merit preservation in a centralized repository. They are stored to GitLab
 in the interest of convenience to my own uses. They are, as a result, freely
 available for general public use without expectation of support or documentation.
 
