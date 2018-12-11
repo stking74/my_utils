@@ -1,4 +1,4 @@
-#my_utils
+# my_utils
 
 my_utils is a collection of utility functions which have proven useful enough
 to merit preservation in a centralized repository. They are stored to GitLab

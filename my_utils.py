@@ -106,7 +106,20 @@ def find_nearest_member(container, query):
     mindex = list(diffs).index(minimum)
     return mindex
 
-def progress_counter(i, interval, end):
+def progress_counter(i, end, interval=None):
+    '''
+    Simple linear integer progress counter. To be called during every iteration
+    of process being monitored/counted.'
+    
+    Input:
+    --------
+    i : int
+        index of item being counted (ex. the counter output of an enumerator)
+    end : int
+        total number of items to be counted
+    interval : int or None (optional)
+        suppresses output if i is not a multiple of interval
+    '''
     if abs(i) > 0 and i % 1000 == 0:
         print('%i / %i'%(i,end))
     return
@@ -157,4 +170,4 @@ def binning(container, n_bins, cores=None):
         window = np.where(abs(n_old_indices - n) < index_gap)
         old_values = container[window]
         new_container[idx] = np.sum(old_values)
-    return new_container
+    return new_container, n_new_indices
