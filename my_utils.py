@@ -171,3 +171,25 @@ def binning(container, n_bins, cores=None):
         old_values = container[window]
         new_container[idx] = np.sum(old_values)
     return new_container, n_new_indices
+
+def cartesian_distance(a, b):
+    '''
+    Calculates the distance between two points within a cartesian coordinate plane
+    
+    Input:
+    --------
+        a : tuple or list
+        First point to consider for distance calculation
+        
+        b : tuple or list
+        Second point to consider for distance calculation
+    
+    Output:
+    --------
+        distance : float
+        Distance between points a and b, expressed in the same units as the coordinates given for a and b
+    '''
+    x1, y1 = a
+    x2, y2 = b
+    distance = np.sqrt((x2-x1)**2+(y2-y1)**2)
+    return distance
