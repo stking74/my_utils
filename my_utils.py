@@ -189,7 +189,26 @@ def cartesian_distance(a, b):
         distance : float
         Distance between points a and b, expressed in the same units as the coordinates given for a and b
     '''
+    import numpy as np
     x1, y1 = a
     x2, y2 = b
     distance = np.sqrt((x2-x1)**2+(y2-y1)**2)
     return distance
+
+def apply_polynomial(x, p):
+    '''
+    Passes x data through an n-degree polynomial function with coefficients p
+    '''
+            y = np.empty_like(x)
+            order = len(p) - 1
+            for idx, value in enumerate(x):
+                result = 0
+                d = 0
+                while d <= order:
+                    coefficient = p[d]
+                    exponent = order-d
+                    result += coefficient*(value**exponent)
+                    d += 1
+                y[idx] = result
+            return y
+        
