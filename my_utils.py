@@ -273,3 +273,30 @@ def fit_distribution(x, y, p, dist='gaussian'):
             fitted = popt = None
     else: fitted = popt = None
     return fitted, popt
+
+def find_quartiles(data):
+    '''
+    Analyzes 1D array to identify statistical quartiles, as well as associated
+    ranges and outliers.
+    '''
+    import numpy as np
+    data = list(data)
+    data.sort()
+    data = np.array(data)
+    second = np.median(data)
+    lower = data[np.where(data<=second)]
+    upper = data[np.where(data>=second)]
+    first = np.median(lower)
+    third = np.median(upper)
+    quartiles = (first, second, third)
+    iqr = third-first
+    upper_cutoff = third + 1.5*iqr
+    lower_cutoff = first - 1.5*iqr
+    whiskers = []
+    whiskers.append(data[np.where(data>=lower_cutoff)][0])
+    whiskers.append(data[np.where(data<=upper_cutoff)][-1])
+    whiskers = tuple(whiskers)
+    outliers = 0
+    outliers += len(data[np.where(data<lower_cutoff)])
+    outliers += len(data[np.where(data>upper_cutoff)])
+    return quartiles, whiskers, outliers
