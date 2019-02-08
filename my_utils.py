@@ -9,6 +9,9 @@ def scrape_directory(path, flag, recursive=True):
     By default, performs recursive search on all subdirectories of "path". Can
     be disabled by setting kwd "recursive" to False.
     
+    The special value "*" can be used as a wildcard to list all files, 
+    regardless of their extension. 
+    
     Input:
     --------
     path : str
@@ -47,16 +50,18 @@ def scrape_directory(path, flag, recursive=True):
             pass
     returned_files = []
     #Iterate through items identified as files
-    for item in catalog:
-        #Split item to extract file extension
-        split_item = item.split('.')
-        try:
-            #If extracted extension matches flag, append item to list of items to be returned
-            if split_item[1] == flag:
-                returned_files.append(item)
-        #If item has no associated extension, pass over item
-        except IndexError:
-            continue
+    if flag is not '*':
+        for item in catalog:
+            #Split item to extract file extension
+            split_item = item.split('.')
+            try:
+                #If extracted extension matches flag, append item to list of items to be returned
+                if split_item[1] == flag:
+                    returned_files.append(item)
+            #If item has no associated extension, pass over item
+            except IndexError:
+                continue
+    else: returned_files = catalog
     return returned_files
 
 def soft_append(container, addendum):
