@@ -217,3 +217,19 @@ def apply_polynomial(x, c):
             y_i += (i**idx)*coeff
         y[i] = y_i
     return y
+
+def downsample_2d(array, target_resolution):
+    import numpy as np
+    initial_shape = array.shape
+    d_array = np.empty(shape=target_resolution, dtype=np.float32)
+    resample_axes = np.array([np.linspace(0, initial_shape[i], target_resolution[i]+1) for i in range(2)], dtype=int)
+    x = list(range(initial_shape[0]))
+    y = list(range(initial_shape[1]))
+    for i, row in enumerate(d_array):
+        for j, pixel in enumerate(row):
+            mask = ((resample_axes[0, i], resample_axes[0, i+1]),(resample_axes[1, j], resample_axes[1, j+1]))
+            window = array[mask[0][0]:mask[0][1], mask[1][0]:mask[1][1]]
+            d_array[i,j] = np.mean(window)
+    
+    return d_array
+    return d_array
