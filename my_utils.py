@@ -193,3 +193,27 @@ def cartesian_distance(a, b):
     x2, y2 = b
     distance = np.sqrt((x2-x1)**2+(y2-y1)**2)
     return distance
+
+def apply_polynomial(x, c):
+    '''
+    Applies nth order polynomial to input array x. n is equal to len(c) - 1.
+
+    when c = (1, -2, 3), function is equivalent to:
+        f(x) = 3*x**2 - 2*x + 1
+
+    Input:
+    --------
+        x : array-like
+            data to be evaluated with polynomial
+        c : array-like
+            polynomial coefficients in ascending polynomial order
+    '''
+    import numpy as np
+    x = np.asarray(x)
+    y = np.empty_like(x, dtype=np.float64)
+    for i in x:
+        y_i = 0
+        for idx, coeff in enumerate(np.flip(c)):
+            y_i += (i**idx)*coeff
+        y[i] = y_i
+    return y
