@@ -199,24 +199,6 @@ def cartesian_distance(a, b):
     x2, y2 = b
     distance = np.sqrt((x2-x1)**2+(y2-y1)**2)
     return distance
-
-def apply_polynomial(x, p):
-    '''
-    Passes x data through an n-degree polynomial function with coefficients p
-    '''
-            y = np.empty_like(x)
-            order = len(p) - 1
-            for idx, value in enumerate(x):
-                result = 0
-                d = 0
-                while d <= order:
-                    coefficient = p[d]
-                    exponent = order-d
-                    result += coefficient*(value**exponent)
-                    d += 1
-                y[idx] = result
-            return y
-
 def fit_distribution(x, y, p, dist='gaussian'):
     '''
     Fit a statistical distribution to data y using initial guess parameters p
@@ -311,3 +293,50 @@ def time_function(f, *args, **kwds):
     t0 = time.time()
     output = f(*args, **kwds)
     return time.time() - t0
+def apply_polynomial(x, c):
+    '''
+    Applies nth order polynomial to input array x. n is equal to len(c) - 1.
+
+    when c = (1, -2, 3), function is equivalent to:
+        f(x) = 3*x**2 - 2*x + 1
+
+    Input:
+    --------
+        x : array-like
+            data to be evaluated with polynomial
+        c : array-like
+            polynomial coefficients in ascending polynomial order
+    '''
+    import numpy as np
+    x = np.asarray(x)
+    y = np.empty_like(x, dtype=np.float64)
+    for i in x:
+        y_i = 0
+        for idx, coeff in enumerate(np.flip(c)):
+            y_i += (i**idx)*coeff
+        y[i] = y_i
+    return y
+
+def downsample_2d(array, target_resolution):
+    import numpy as np
+    initial_shape = array.shape
+    d_array = np.empty(shape=target_resolution, dtype=np.float32)
+    resample_axes = np.array([np.linspace(0, initial_shape[i], target_resolution[i]+1) for i in range(2)], dtype=int)
+    x = list(range(initial_shape[0]))
+    y = list(range(initial_shape[1]))
+    for i, row in enumerate(d_array):
+        for j, pixel in enumerate(row):
+            mask = ((resample_axes[0, i], resample_axes[0, i+1]),(resample_axes[1, j], resample_axes[1, j+1]))
+            window = array[mask[0][0]:mask[0][1], mask[1][0]:mask[1][1]]
+            d_array[i,j] = np.mean(window)
+    
+    return d_array
+    return d_array
+
+def proxy_sort(template, data):
+    import numpy as np
+    order = np.argsort(template)
+    sorted_data = []
+    for d in data:
+        sorted_data.append([d[i] for i in order])
+    return sorted_data
