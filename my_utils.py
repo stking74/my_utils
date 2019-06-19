@@ -305,3 +305,11 @@ def find_quartiles(data):
     outliers += len(data[np.where(data<lower_cutoff)])
     outliers += len(data[np.where(data>upper_cutoff)])
     return quartiles, whiskers, outliers
+
+def proxy_sort(template, data):
+    import numpy as np
+    order = np.argsort(template)
+    sorted_data = []
+    for d in data:
+        sorted_data.append([d[i] for i in order])
+    return sorted_data
