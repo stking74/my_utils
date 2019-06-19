@@ -305,3 +305,9 @@ def find_quartiles(data):
     outliers += len(data[np.where(data<lower_cutoff)])
     outliers += len(data[np.where(data>upper_cutoff)])
     return quartiles, whiskers, outliers
+
+def time_function(f, *args, **kwds):
+    import time
+    t0 = time.time()
+    output = f(*args, **kwds)
+    return time.time() - t0
