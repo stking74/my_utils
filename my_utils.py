@@ -5,13 +5,13 @@ def scrape_directory(path, flag, recursive=True):
     Parses contents of provided path, returns list of instances where an item
     within the provided path has an extension matching the string provided
     as "flag".
-    
+
     By default, performs recursive search on all subdirectories of "path". Can
     be disabled by setting kwd "recursive" to False.
-    
-    The special value "*" can be used as a wildcard to list all files, 
-    regardless of their extension. 
-    
+
+    The special value "*" can be used as a wildcard to list all files,
+    regardless of their extension.
+
     Input:
     --------
     path : str
@@ -20,7 +20,7 @@ def scrape_directory(path, flag, recursive=True):
         Flag to identify directory contents to be returned
     recursive : bool
         If true, subdirectories of path are also scraped, results returned with root (default recursive=True)
-    
+
     Output:
     --------
     returned_files : list of str
@@ -29,7 +29,7 @@ def scrape_directory(path, flag, recursive=True):
     import os
     catalog = []
     #Dump all contents of path into temporary container
-    dir_dump = os.listdir(path)         
+    dir_dump = os.listdir(path)
     #Iterate through temporary container, categorize contents as files or directories
     for item in dir_dump:
         fullname = os.path.join(path, item)
@@ -68,7 +68,7 @@ def soft_append(container, addendum):
     '''
     Appends addendum item to container only if addendum is not already member
     of container. Returns nothing, since container is appended in-place.
-    
+
     Input:
     --------
     container : list
@@ -81,25 +81,30 @@ def soft_append(container, addendum):
         return
     return
 
-def find_nearest_member(container, query):
+def find_nearest_member(container, query, truncate=False):
     '''
     Finds the member of a container whose value is nearest to query. Returns
-    index of nearest value within container. Intended to be used when 
+    index of nearest value within container. Intended to be used when
     list.index(query) is, for whatever reason, not a viable option for locating
     the desired value within the container.
-    
+
     Input:
     --------
     container : container variable (eg list, tuple, set, Numpy array)
         The container to be searched by the function
     query : number (eg int or float)
         Value to be searched for within container
-        
+
     Output:
     --------
     mindex : int
         Index of item in container whose value most nearly matches query
     '''
+    c_min = min(container)
+    c_max = max(container)
+    if truncate:
+        if query > c_max or query < c_min:
+            raise ValueError('Query is not within range of container.')
     try:
         diffs = abs(container - query)
     except:
@@ -115,7 +120,7 @@ def progress_counter(i, end, interval=None):
     '''
     Simple linear integer progress counter. To be called during every iteration
     of process being monitored/counted.'
-    
+
     Input:
     --------
     i : int
@@ -134,7 +139,7 @@ def binning(container, n_bins, cores=None):
     Simple 1-dimensional binning algorithm. Reduces number of datapoints
     in a linear counting-style measurement, such that the input and output
     variables have the same integral.
-    
+
     Input:
     --------
     container : list or numpy.array
@@ -143,7 +148,7 @@ def binning(container, n_bins, cores=None):
         number of bins in returned container
     cores : int
         number of cores to use for multiprocessing (planned feature)
-        
+
     Output:
     --------
     new_container : numpy.array
@@ -180,15 +185,15 @@ def binning(container, n_bins, cores=None):
 def cartesian_distance(a, b):
     '''
     Calculates the distance between two points within a cartesian coordinate plane
-    
+
     Input:
     --------
         a : tuple or list
         First point to consider for distance calculation
-        
+
         b : tuple or list
         Second point to consider for distance calculation
-    
+
     Output:
     --------
         distance : float
@@ -199,20 +204,21 @@ def cartesian_distance(a, b):
     x2, y2 = b
     distance = np.sqrt((x2-x1)**2+(y2-y1)**2)
     return distance
+    
 def fit_distribution(x, y, p, dist='gaussian'):
     '''
     Fit a statistical distribution to data y using initial guess parameters p
     '''
     from scipy.optimize import curve_fit
     from scipy import exp
-    
+
     def _gaussian_(x, a, x0, sigma):
         '''
         In probability theory, the normal (or Gaussian or Gauss or Laplace–Gauss)
         distribution is a very common continuous probability distribution. Normal
-        distributions are important in statistics and are often used in the 
+        distributions are important in statistics and are often used in the
         natural and social sciences to represent real-valued random variables
-        whose distributions are not known. A random variable with a Gaussian 
+        whose distributions are not known. A random variable with a Gaussian
         distribution is said to be normally distributed and is called a normal deviate.
         '''
         return a*exp(-(x-x0)**2/(2*sigma**2))
@@ -237,13 +243,13 @@ def fit_distribution(x, y, p, dist='gaussian'):
         probability distribution. It is also known, especially among physicists,
         as the Lorentz distribution (after Hendrik Lorentz), Cauchy–Lorentz
         distribution, Lorentz(ian) function, or Breit–Wigner distribution. The
-        Cauchy distribution is the distribution of the x-intercept of a ray 
+        Cauchy distribution is the distribution of the x-intercept of a ray
         issuing from (x0, hwhm) with a uniformly distributed angle. It is also
         the distribution of the ratio of two independent normally distributed
         random variables if the denominator distribution has mean zero.
         '''
         return a*((hwhm**2 / ((x-x0)**2 + hwhm**2))*(1/x0/np.pi))
-    
+
     dist_options = set(['gaussian', 'laplace', 'cauchy'])
     if dist in dist_options:
         if dist.upper() == 'GAUSSIAN':
@@ -293,6 +299,7 @@ def time_function(f, *args, **kwds):
     t0 = time.time()
     output = f(*args, **kwds)
     return time.time() - t0
+
 def apply_polynomial(x, c):
     '''
     Applies nth order polynomial to input array x. n is equal to len(c) - 1.
@@ -329,7 +336,7 @@ def downsample_2d(array, target_resolution):
             mask = ((resample_axes[0, i], resample_axes[0, i+1]),(resample_axes[1, j], resample_axes[1, j+1]))
             window = array[mask[0][0]:mask[0][1], mask[1][0]:mask[1][1]]
             d_array[i,j] = np.mean(window)
-    
+
     return d_array
     return d_array
 
