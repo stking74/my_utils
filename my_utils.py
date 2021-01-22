@@ -347,3 +347,36 @@ def proxy_sort(template, data):
     for d in data:
         sorted_data.append([d[i] for i in order])
     return sorted_data
+
+
+def scatter3d(data_array, fname, labels=None):
+    
+    from mpl_toolkits.mplot3d import Axes3D
+    import numpy as np
+    import imageio
+    import os
+    import matplotlib.pyplot as plt
+    
+    if labels is None:
+        labels = np.zeros((data_array.shape[0]))
+    
+    x = np.array([d[0] for d in data_array])
+    y = np.array([d[1] for d in data_array])
+    z = np.array([d[2] for d in data_array])
+    
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(x, y, z, marker='o',c=labels, alpha=0.2)
+
+    images = []
+    for angle in range(0, 360):
+        ax.view_init(30, angle)
+        plt.draw()
+        plt.savefig('.kscatter_temp.png')
+        im = imageio.imread('.kscatter_temp.png')
+        images.append(im)
+        os.remove('.kscatter_temp.png')
+         
+    imageio.mimwrite(fname, images, format='gif')
+    plt.close()
+    return
