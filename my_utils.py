@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-A catch-all for various functions helpful in a wide number of applications, or 
+A catch-all for various functions helpful in a wide number of applications, or
 that I've found myself reproducing in a variety of other projects.
 
 @author: Tyler King
@@ -214,7 +214,7 @@ def cartesian_distance(a, b):
     x2, y2 = b
     distance = np.sqrt((x2-x1)**2+(y2-y1)**2)
     return distance
-    
+
 def fit_distribution(x, y, p, dist='gaussian'):
     '''
     Fit a statistical distribution to data y using initial guess parameters p
@@ -328,10 +328,10 @@ def apply_polynomial(x, c):
     import numpy as np
     x = np.asarray(x)
     y = np.empty_like(x, dtype=np.float64)
-    for i in x:
+    for i, xi in enumerate(x):
         y_i = 0
         for idx, coeff in enumerate(np.flip(c)):
-            y_i += (i**idx)*coeff
+            y_i += (xi**idx)*coeff
         y[i] = y_i
     return y
 
@@ -361,22 +361,21 @@ def proxy_sort(template, data, reverse=False):
         sorted_data.reverse()
     return sorted_data
 
-
 def scatter3d(data_array, fname, labels=None):
-    
+
     from mpl_toolkits.mplot3d import Axes3D
     import numpy as np
     import imageio
     import os
     import matplotlib.pyplot as plt
-    
+
     if labels is None:
         labels = np.zeros((data_array.shape[0]))
-    
+
     x = np.array([d[0] for d in data_array])
     y = np.array([d[1] for d in data_array])
     z = np.array([d[2] for d in data_array])
-    
+
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(x, y, z, marker='o',c=labels, alpha=0.2)
@@ -389,7 +388,7 @@ def scatter3d(data_array, fname, labels=None):
         im = imageio.imread('.kscatter_temp.png')
         images.append(im)
         os.remove('.kscatter_temp.png')
-         
+
     imageio.mimwrite(fname, images, format='gif')
     plt.close()
     return
@@ -418,3 +417,8 @@ element_mass_lookup_table = {
     'Bh':270,'Db':268,'Sg':269,'Ds':281,'Rg':282,'Cn':285,'Nh':286,
     'Fl':289,'Mc':290,'Lv':293,'Ts':294,'Og':294
     }
+
+def r_squared(measured, predicted):
+    import numpy as np
+    corr = np.corrcoef(measured, predicted)[0,1]
+    return corr ** 2
