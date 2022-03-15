@@ -422,3 +422,43 @@ def r_squared(measured, predicted):
     import numpy as np
     corr = np.corrcoef(measured, predicted)[0,1]
     return corr ** 2
+
+def liveplot(x, y, q=1, length=60, fname='liveplot.gif', figsize=(6,4)):
+    import numpy as np
+    import os
+    import matplotlib.pyplot as plt
+    from PIL import Image
+    
+    xmin = x[0]/3600
+    xbounds = (0, (x[-1]/3600) - xmin)
+    ybounds = (min(y), max(y))
+    yrange = ybounds[1] - ybounds[0]
+    ybounds = (ybounds[0]-(yrange*0.1), ybounds[1]+(yrange*0.1))
+    images = []
+    counter = 1
+    tempnames = []
+    for i in range(len(x)):
+        if i%q != 0:
+            continue
+        xi = (np.array(x[:i]) / 3600) - xmin
+        yi = np.array(y[:i])
+        plt.figure(figsize=figsize)
+        plt.xlim(xbounds[0],xbounds[1])
+        plt.ylim(ybounds[0],ybounds[1])
+        plt.plot(xi,yi)
+        plt.xlabel('Time (hours)')
+        plt.ylabel('Potential (V)')
+        tempname = f'temp_{counter}.png'
+        plt.savefig(tempname)
+        plt.close()
+        tempnames.append(tempname)
+        counter += 1
+    for tempname in tempnames:
+        images.append(Image.open(tempname))
+    nframes = len(images)
+    length = (length*1000/nframes)
+    images[0].save(fname, save_all=True, append_images=images[1:], duration=length, loop=1)
+    
+    for tempname in tempnames:
+        os.remove(tempname)
+    return
