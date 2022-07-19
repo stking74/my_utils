@@ -8,7 +8,29 @@ that I've found myself reproducing in a variety of other projects.
 Trans rights are human rights.
 """
 
+def rgb_to_gray(frame):
+    import numpy as np
+    condense_color = lambda r, g, b: (r*0.299) + (b*0.114) + (g*0.587)
+    x, y, c = frame.shape
+    grayscale = np.zeros_like(frame[:,:,0])
+    for i in range(x):
+        for j in range(y):
+            r,g,b = frame[i,j]
+            grayscale[i,j] = condense_color(r,g,b)
+    return grayscale
 
+def correlation_matrix(data):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    
+    corr = np.corrcoef(data)
+    plt.imshow(corr, cmap='bwr', vmin=-1, vmax=1)
+    plt.colorbar()
+    for i, row in enumerate(corr):
+        for j, cell in enumerate(row):
+            s = f'{cell:.03}'
+            plt.text(j, i, s, ha='center')
+    return
 
 def scrape_directory(path, flag, recursive=True):
     '''
@@ -21,6 +43,8 @@ def scrape_directory(path, flag, recursive=True):
 
     The special value "*" can be used as a wildcard to list all files,
     regardless of their extension.
+    
+    Mostly written by Dr Nick Borodinov.
 
     Input:
     --------
